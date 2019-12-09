@@ -1,6 +1,7 @@
 # Fork of Hintikkasworld
 The Original repository is located [Here](https://gitlab.inria.fr/fschwarz/hintikkasworld). This repository adds an Aces & Eights example. The original repository seems to be missing two files: assets/bdds/minesweeper_8_8_10.json and assets/bdds/minesweeper_12_15_20.json. The references to these files have been removed since the project will not start without these files. As a result, the minesweeper models may not work correctly.
 
+This repository is deployed at [http://hintikkasworld.herokuapp.com](http://hintikkasworld.herokuapp.com)
 # The README from the original repository is as follows:
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.1.
