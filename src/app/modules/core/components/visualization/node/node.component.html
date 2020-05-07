@@ -1,9 +1,9 @@
 <svg>
-    <g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
+    <g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'" [attr.stroke]="node.isPointed ? '#ED5D1B' : ''">
       <circle cx="0" cy="0" r="6">
       </circle>
-      <text transform="translate(-2, -9)">
-        {{node.id + ' : ' + node.text}}
+      <text transform="translate(2, -9)">
+        {{node.id}}
       </text>
     </g>
   </svg>

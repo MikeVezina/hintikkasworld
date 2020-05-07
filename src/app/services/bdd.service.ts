@@ -392,7 +392,7 @@ export class BddService {
   }
 
   countSolutions(bddNode: BDDNode, atoms?: string[]): number {
-    const nbvars = atoms !== undefined ? atoms.length : -1;
+    const nbvars = -1; // atoms !== undefined ? atoms.length : -1;
     return this.bddModule._count_solutions(bddNode, nbvars);
   }
 

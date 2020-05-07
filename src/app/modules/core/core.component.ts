@@ -15,6 +15,7 @@ import { FormulaFactory, Formula } from './models/formula/formula';
 import { ExplicitEventModel } from './models/eventmodel/explicit-event-model';
 import { SymbolicPublicAnnouncement } from './models/eventmodel/symbolic-public-announcement';
 import { SymbolicEpistemicModel } from './models/epistemicmodel/symbolic-epistemic-model';
+import {EnvironmentProxy} from "./models/environment/environment-proxy";
 
 
 
@@ -33,7 +34,7 @@ export class CoreComponent implements OnInit {
     let exampleDescription = this.exampleService.getExampleDescription();
     let env: Environment;
 	  try {
-      env = new Environment(exampleDescription);
+      env = new EnvironmentProxy(exampleDescription);
     }
     catch (error) {
       let err = <Error>error;
@@ -41,7 +42,7 @@ export class CoreComponent implements OnInit {
       console.error(err.stack);
       console.log("Error: so we load MuddyChildren!");
       exampleDescription = new MuddyChildren(2);
-      env = new Environment(exampleDescription);
+      env = new EnvironmentProxy(exampleDescription);
     }
     this.bsEnv = new BehaviorSubject(env);
 

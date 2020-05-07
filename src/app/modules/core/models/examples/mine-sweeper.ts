@@ -16,8 +16,6 @@ import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descrip
 // import jsonMineSweeper_12_15_20 from '../../../../../assets/bdds/minesweeper_12_15_20.json';
 
 
-
-
 class Cell {
     row: number;
     col: number;
@@ -247,7 +245,7 @@ export class MineSweeper extends ExampleDescription {
         /**
          * Good example of creating symbolic epistemic model in which
          * SEModelDescriptorFormulaMineSweeper implements SEModelDescriptor
-         * to create a symbolic epistemic model from crash.
+         * to create a symbolic epismine-sweeper.tsemic model from crash.
          */
         class SEModelDescriptorFormulaMineSweeper implements SEModelDescriptor {
             getAtomicPropositions() {
@@ -276,11 +274,7 @@ export class MineSweeper extends ExampleDescription {
             worlds = undefined;
 
             constructor(r, c, m) {
-                // if (r == 12 && c == 15 && m == 20)
-                //     this.worlds = BDDWorkerService.createBDDFromJSON(jsonMineSweeper_12_15_20);
-                // else if (r == 8 && c == 8 && m == 10) {
-                //     this.worlds = BDDWorkerService.createBDDFromJSON(jsonMineSweeper_8_8_10);
-                // }
+
             }
 
             getAtomicPropositions() {
@@ -377,13 +371,9 @@ export class MineSweeper extends ExampleDescription {
                 }
             }
 
+            console.log(phis);
             return new AndFormula(phis);
         }
-
-
-
-
-
 
         let M: SymbolicEpistemicModel = <SymbolicEpistemicModel>env.getEpistemicModel();
         let pointedWorld: MineSweeperWorld = <MineSweeperWorld>M.getPointedWorld();

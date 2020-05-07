@@ -21,7 +21,7 @@ export class GraphComponent implements OnInit {
 
   graph: Graph;
 
-  private readonly _options: { width, height } = { width: 1000, height: 1000 };
+  private readonly _options: { width, height } = { width: 1000, height: 800 };
   constructor(private d3Service: D3Service) { }
 
   ngOnInit() {
@@ -38,7 +38,8 @@ export class GraphComponent implements OnInit {
 
     this.nodes = [];
     for (let idnode in M.getNodes()) {
-      dictionnaryNode[idnode] = new Node(idnode, M.getNode(idnode).toString());
+      var isPointed = M.getPointedWorldID() === idnode;
+      dictionnaryNode[idnode] = new Node(idnode, M.getNode(idnode).toString(), isPointed);
       this.nodes.push(dictionnaryNode[idnode]);
     }
 

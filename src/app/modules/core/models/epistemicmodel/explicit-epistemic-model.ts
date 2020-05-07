@@ -7,6 +7,9 @@ import { WorldValuation } from './world-valuation';
 import { environment } from 'src/environments/environment';
 import { World } from './world';
 import { SuccessorSet } from './successor-set';
+import {Formula} from "./../formula/formula";
+
+
 
 export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
     isLoadedObservable(): BehaviorSubject<boolean> {
@@ -31,16 +34,59 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
         return new ExplicitSuccessorSet(successorIDs.map((id) => this.getNode(id)));
     }
 
+    private static evalAllProps(world: World, props: string[]) : boolean {
+
+        if (!world || !props)
+            return true;
+
+        for (var prop of props)
+        {
+            if (!world.modelCheck(prop))
+                return false;
+        }
+
+        return true;
+    }
+
     /**
     @param w ID of a node
     @example M.setPointedWorld("w")
     **/
-    setPointedWorld(w: string) {
-        if (this.nodes[w] == undefined)
-            throw ("the epistemic model does not contain any world of ID " + w);
-        this.setPointedNode(w);
+    setPointedWorld(w: String | string[]) {
+
+        if (w instanceof Array)
+           w = <String> this.findPointedWorld(w);
+
+        if(w instanceof String || typeof w === "string")
+        {
+            if (this.nodes[<string>w] == undefined)
+                throw ("the epistemic model does not contain any world of ID " + w);
+
+            this.setPointedNode(w);
+        }
+
+
     }
 
+    hasPossibleWorld(props: string[]) : boolean
+    {
+        return this.findPointedWorld(props) !== undefined;
+    }
+
+    private findPointedWorld(props: string[]) : String {
+        if (this.getPointedWorldID() && ExplicitEpistemicModel.evalAllProps(this.getPointedWorld(), props))
+            return this.getPointedWorldID();
+
+        for (let nodesKey in this.nodes) {
+            let node : World = <World> this.nodes[nodesKey];
+
+            if (ExplicitEpistemicModel.evalAllProps(node, props))
+                return nodesKey;
+
+        }
+
+        return undefined;
+    }
 
     /**
     @returns the pointed world

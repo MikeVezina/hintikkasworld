@@ -15,14 +15,17 @@ import { Router } from '@angular/router';
 import { ConsecutiveNumbers } from './../core/models/examples/consecutive-numbers';
 import { MuddyChildren } from './../core/models/examples/muddy-children';
 import { ExampleDescription } from './../core/models/environment/exampledescription';
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input, Injectable} from '@angular/core';
 import { ExampleService } from 'src/app/services/example.service';
 import { SallyAndAnn } from '../core/models/examples/sally-and-ann';
 import { CommonknowledgeStrictlyMoreExpressive } from '../core/models/examples/commonknowledge-strictly-more-expressive';
 import { BattleShip } from '../core/models/examples/battle-ship';
 import {AcesAndEights} from '../core/models/examples/aces-and-eights';
+import {RemoteDescription} from "../core/models/examples/remote";
+import {MineSwooper} from "../core/models/examples/mine-swooper";
+import {HttpClient} from "@angular/common/http";
 
-
+@Injectable()
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
@@ -32,12 +35,13 @@ export class MenuComponent implements OnInit {
 
   explicitExamples = [new Simple(), new MuddyChildren(2), new MuddyChildren(3), new MuddyChildren(4), new SallyAndAnn(), new Hats(), new DiningCryptographersProblem(),
   new ConsecutiveNumbers(), new NanoHanabi(), new AcesAndEights(),
-  new Cherylsbirthday(), new CoordinatedAttackProblem()];//, new LinesBirthday()];
+  new Cherylsbirthday(), new CoordinatedAttackProblem(), new RemoteDescription(this.http)];//, new LinesBirthday()];
 
   symbolicExamples = [new MineSweeper(2, 2, 1),  new MineSweeper(5, 6, 15), new MineSweeper(8, 8, 10), new MineSweeper(8, 10, 3), 
     new MineSweeper(10, 10, 6),
     new MineSweeper(16,16, 40), 
-    new MineSweeper(12, 15, 20), new Belote(), 
+    new MineSweeper(12, 15, 20), new Belote(),
+      new MineSwooper(),
     new BattleShip(3,3,[2,3]),
     new BattleShip(4,4,[3,3]),
     new BattleShip(5,5,[3,3]),
@@ -51,7 +55,7 @@ export class MenuComponent implements OnInit {
     this.router.navigate(['core']);
   }
 
-  constructor(private exampleService: ExampleService, private router: Router) { }
+  constructor(private exampleService: ExampleService, private router: Router, private http: HttpClient) { }
 
   ngOnInit() {
   }

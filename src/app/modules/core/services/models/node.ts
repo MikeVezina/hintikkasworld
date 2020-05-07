@@ -11,9 +11,11 @@ export class Node implements d3.SimulationNodeDatum {
     
     id: string;
     text: string;
+    isPointed: string;
 
-    constructor(id, text) {
+    constructor(id, text, isPointed?) {
         this.id = id;
         this.text= text;
+        this.isPointed = isPointed;
     }
 }

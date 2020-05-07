@@ -294,6 +294,9 @@ export class ComicsComponent implements OnInit {
     this.closeLevelsGreaterThan(0);
 
     var canvas = <HTMLCanvasElement>document.getElementById('canvas');
+    if (!canvas)
+      return;
+
     var context = canvas.getContext('2d');
 
     context.clearRect(0, 0, canvas.width, canvas.height);

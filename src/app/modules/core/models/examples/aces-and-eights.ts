@@ -7,11 +7,13 @@ import {Valuation} from '../epistemicmodel/valuation';
 import {World} from '../epistemicmodel/world';
 import {EventModelAction} from '../environment/event-model-action';
 import {FormulaFactory} from '../formula/formula';
+import {Environment} from "../environment/environment";
+import {ExplicitFilterEventModel} from '../eventmodel/explicit-filter-event-model';
 
 let agents = {
-    'a': 1,
-    'b': 2,
-    'c': 3,
+    'a': "alice",
+    'b': "bob",
+    'c': "charlie",
 };
 
 
@@ -39,7 +41,7 @@ class AcesAndEightsWorld extends WorldValuation {
                     let agent_number = agents[agent];
 
                     // Checks if card proposition is true, and draws that card (for a and b only)
-                    if (this.modelCheck(agent_number + first_card + second_card)) {
+                    if (this.modelCheck(agent_number + '_' + first_card + second_card)) {
                         WorldValuation.drawCard(context, {
                             x: this.agentPos[agent].x - 16,
                             y: this.agentPos[agent].y,
@@ -72,21 +74,38 @@ export class AcesAndEights extends ExampleDescription {
     agent1;
     agent2;
     agent3;
+    model;
 
     getAtomicPropositions() {
         let A = [];
         for (let x = 1; x <= 3; x++) {
-            ['AA', 'A8', '88'].forEach((prop) => A.push(x + prop.toString()));
+            ['AA', 'A8', '88'].forEach((prop) => {
+                let ag = "";
+                if (x == 1)
+                    ag = "alice_";
+                if (x == 2)
+                    ag = "bob_";
+                if (x == 3)
+                    ag = "charlie_";
+
+                A.push(ag + prop.toString())
+            });
         }
 
         return A;
     }
+
+    public onRealWorldClickRightButton(env: Environment, point: any): void {
+        let model = <ExplicitEpistemicModel>env.getEpistemicModel();
+        console.log(model.getPointedWorldID());
+    };
 
     getName() {
         return 'Aces & Eights';
     }
 
     getInitialEpistemicModel() {
+
         const create_combinations = (inputArr) => {
 
             let result = [];
@@ -103,7 +122,9 @@ export class AcesAndEights extends ExampleDescription {
 
         };
 
-        let M = new ExplicitEpistemicModel();
+        this.model = new ExplicitEpistemicModel();
+        let M = this.model;
+
         let combinations = create_combinations(['AA', 'A8', '88']);
 
         console.log(combinations);
@@ -124,13 +145,23 @@ export class AcesAndEights extends ExampleDescription {
         combinations = combinations.filter((f) => !invalid_permutations.some(r => JSON.stringify(r) === JSON.stringify(f)));
 
         for (let combination of combinations) {
-            M.addWorld('w1' + combination[0] + '_2' + combination[1] + '_3' + combination[2], new AcesAndEightsWorld(new Valuation(['1' + combination[0], '2' + combination[1], '3' + combination[2]])));
+            M.addWorld('w_alice_' + combination[0] + '_bob_' + combination[1] + '_charlie_' + combination[2] + "", new AcesAndEightsWorld(new Valuation(['alice_' + combination[0], 'bob_' + combination[1], 'charlie_' + combination[2] + ""])));
         }
 
         Object.keys(agents).forEach(agent =>
-            M.addEdgeIf(agent, function(w1, w2) {
+            M.addEdgeIf(agent, function (w1, w2) {
 
                 let agent_number = agents[agent];
+
+
+                if (agent_number !== 'alice')
+                    return false;
+
+                return true;
+
+                if (agent_number === 'charlie')
+                    return false;
+
 
                 let other_agent_props = Object.keys(w1.valuation.getPropositionMap()).filter(prop => !prop.startsWith(agent_number));
                 return other_agent_props.every(other_agent_prop => w1.modelCheck(other_agent_prop) === w2.modelCheck(other_agent_prop));
@@ -140,45 +171,74 @@ export class AcesAndEights extends ExampleDescription {
         let selected = Math.floor(Math.random() * combinations.length);
         let selected_cards = combinations[selected];
 
-        this.agent1 = selected_cards[0];
-        this.agent2 = selected_cards[1];
-        this.agent3 = selected_cards[2];
+        this.agent1 = "88"//selected_cards[0];
+        this.agent2 = "A8"//selected_cards[1];
+        this.agent3 = "AA"//selected_cards[2];
 
-        let world_name = 'w1' + this.agent1 + '_2' + this.agent2 + '_3' + this.agent3;
+        let world_name = 'w_alice_' + this.agent1 + '_bob_' + this.agent2 + '_charlie_' + this.agent3;
+        console.log(world_name);
 
-        M.setPointedWorld(world_name);
-        M.removeUnReachablePartFrom(world_name);
+
+        console.log(world_name);
+
+        // Alice's POV
+        M.setPointedWorld([]);
+        M.setPointedWorld(["bob_A8"]);
+        // M.removeUnReachablePartFrom(world_name);
         return M;
     }
 
+    cachedInitialModel;
+
+    createNewInfoAction(props, agent): EventModelAction {
+        if (!this.cachedInitialModel)
+            this.cachedInitialModel = this.getInitialEpistemicModel();
+
+        let event = ExplicitFilterEventModel.getActionModelNewInformation(this.cachedInitialModel, props, agent);
+        let agentName = agents[agent];
+
+        return new EventModelAction({
+            name: agentName + " can see " + JSON.stringify(props),
+            eventModel: event
+        })
+    }
 
     getActions() {
 
         return [
-            new EventModelAction({
-                name: 'Alice does not know',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('(not((K a 1AA) or (K a 1A8) or (K a 188)))'))
-            }),
-            new EventModelAction({
-                name: 'Alice knows',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('((K a 1AA) or (K a 1A8) or (K a 188))'))
-            }),
-            new EventModelAction({
-                name: 'Bob does not know',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('(not((K b 2AA) or (K b 2A8) or (K b 288)))'))
-            }),
-            new EventModelAction({
-                name: 'Bob knows',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('((K b 2AA) or (K b 2A8) or (K b 288))'))
-            }),
-            new EventModelAction({
-                name: 'Carl does not know',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('(not((K c 3AA) or (K c 3A8) or (K c 388)))'))
-            }),
-            new EventModelAction({
-                name: 'Carl knows',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('((K c 3AA) or (K c 3A8) or (K c 388))'))
-            }),
+            this.createNewInfoAction(["bob_AA"], "a"),
+            this.createNewInfoAction(["charlie_AA"], "a"),
+            this.createNewInfoAction(["bob_A8"], "a"),
+
+            this.createNewInfoAction(["bob_AA", "charlie_AA"], "a"),
+            this.createNewInfoAction(["bob_88", "charlie_AA"], "a"),
+            this.createNewInfoAction(["bob_A8", "charlie_AA"], "a"),
+
+            //
+            // new EventModelAction({
+            //     name: 'Alice does not know',
+            //     eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(form)
+            // }),
+            // new EventModelAction({
+            //     name: 'Alice knows',
+            //     eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('((K a alice_AA) or (K a alice_A8) or (K a alice_88))'))
+            // }),
+            // new EventModelAction({
+            //     name: 'Bob does not know',
+            //     eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('(not((K b bob_AA) or (K b bob_A8) or (K b bob_88)))'))
+            // }),
+            // new EventModelAction({
+            //     name: 'Bob knows',
+            //     eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('((K b bob_AA) or (K b bob_A8) or (K b bob_88))'))
+            // }),
+            // new EventModelAction({
+            //     name: 'Carl does not know',
+            //     eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('(not((K c charlie_AA) or (K c charlie_A8) or (K c charlie_88)))'))
+            // }),
+            // new EventModelAction({
+            //     name: 'Carl knows',
+            //     eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('((K c charlie_AA) or (K c charlie_A8) or (K c charlie_88))'))
+            // }),
 
 
         ];

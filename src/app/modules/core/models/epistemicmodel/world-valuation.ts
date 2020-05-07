@@ -10,6 +10,10 @@ export class WorldValuation extends World {
     this.agentPos = {};
   }
 
+  getValuationProps() : { [id: string]: boolean } {
+    return this.valuation && this.valuation.propositions;
+  }
+
   draw(context: CanvasRenderingContext2D) { this.drawAgents(context); }
   modelCheck(p: string) { return this.valuation.isPropositionTrue(p); }
   toString() { return this.valuation.toString(); }

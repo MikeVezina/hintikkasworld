@@ -4,9 +4,9 @@ import { Edge } from './edge';
 import * as d3 from 'd3';
 
 const FORCES = {
-    EDGES: 1 / 20,
-    COLLISION: 100,
-    CHARGE: -300
+    EDGES: 1 / 90,
+    COLLISION: 200,
+    CHARGE: -80
 }
 
 
@@ -50,7 +50,7 @@ export class Graph {
         /** Updating the central force of the simulation */
         this.simulation.force("center", d3.forceCenter(options.width / 2, options.height / 2));
         /** Restarting the simulation internal timer */
-        this.simulation.restart();
+        //this.simulation.restart();
     }
 
     initEdges(): void {
