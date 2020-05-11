@@ -6,7 +6,7 @@ import { environment } from './../../../environments/environment';
 import { Location } from '@angular/common';
 import { ExampleService } from './../../services/example.service';
 import { Environment } from './models/environment/environment';
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input, Injectable} from '@angular/core';
 import { ExampleDescription } from './models/environment/exampledescription';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ActivatedRoute, ParamMap } from '@angular/router';
@@ -16,6 +16,7 @@ import { ExplicitEventModel } from './models/eventmodel/explicit-event-model';
 import { SymbolicPublicAnnouncement } from './models/eventmodel/symbolic-public-announcement';
 import { SymbolicEpistemicModel } from './models/epistemicmodel/symbolic-epistemic-model';
 import {EnvironmentProxy} from "./models/environment/environment-proxy";
+import {HttpClient} from "@angular/common/http";
 
 
 
@@ -25,16 +26,17 @@ import {EnvironmentProxy} from "./models/environment/environment-proxy";
   templateUrl: './core.component.html',
   styleUrls: ['./core.component.css']
 })
+@Injectable()
 export class CoreComponent implements OnInit {
 
   bsEnv: BehaviorSubject<Environment>;
-  constructor(private exampleService: ExampleService, private location: Location) { }
+  constructor(private exampleService: ExampleService, private location: Location, private http: HttpClient) { }
 
   ngOnInit() {
     let exampleDescription = this.exampleService.getExampleDescription();
-    let env: Environment;
+    let env: EnvironmentProxy;
 	  try {
-      env = new EnvironmentProxy(exampleDescription);
+      env = new EnvironmentProxy(exampleDescription, this.http);
     }
     catch (error) {
       let err = <Error>error;
@@ -42,9 +44,11 @@ export class CoreComponent implements OnInit {
       console.error(err.stack);
       console.log("Error: so we load MuddyChildren!");
       exampleDescription = new MuddyChildren(2);
-      env = new EnvironmentProxy(exampleDescription);
+
+      env = new EnvironmentProxy(exampleDescription, this.http);
     }
     this.bsEnv = new BehaviorSubject(env);
+	  env.setBehaviourSubject(this.bsEnv);
 
     this.bsEnv.subscribe(env => this.initModelChecking());
 

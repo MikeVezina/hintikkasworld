@@ -21,7 +21,7 @@ import { SallyAndAnn } from '../core/models/examples/sally-and-ann';
 import { CommonknowledgeStrictlyMoreExpressive } from '../core/models/examples/commonknowledge-strictly-more-expressive';
 import { BattleShip } from '../core/models/examples/battle-ship';
 import {AcesAndEights} from '../core/models/examples/aces-and-eights';
-import {RemoteDescription} from "../core/models/examples/remote";
+import {RemoteDescription} from "../core/models/examples/remote-description";
 import {MineSwooper} from "../core/models/examples/mine-swooper";
 import {HttpClient} from "@angular/common/http";
 
@@ -35,7 +35,7 @@ export class MenuComponent implements OnInit {
 
   explicitExamples = [new Simple(), new MuddyChildren(2), new MuddyChildren(3), new MuddyChildren(4), new SallyAndAnn(), new Hats(), new DiningCryptographersProblem(),
   new ConsecutiveNumbers(), new NanoHanabi(), new AcesAndEights(),
-  new Cherylsbirthday(), new CoordinatedAttackProblem(), new RemoteDescription(this.http)];//, new LinesBirthday()];
+  new Cherylsbirthday(), new CoordinatedAttackProblem(), new RemoteDescription()];//, new LinesBirthday()];
 
   symbolicExamples = [new MineSweeper(2, 2, 1),  new MineSweeper(5, 6, 15), new MineSweeper(8, 8, 10), new MineSweeper(8, 10, 3), 
     new MineSweeper(10, 10, 6),

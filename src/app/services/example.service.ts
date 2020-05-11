@@ -1,13 +1,7 @@
-import { MineSweeper } from './../modules/core/models/examples/mine-sweeper';
-import { MuddyChildren } from './../modules/core/models/examples/muddy-children';
 import { Injectable } from '@angular/core';
 import { ExampleDescription } from '../modules/core/models/environment/exampledescription';
-import { SimpleSymbolicHanabi } from '../modules/core/models/examples/symbolic-hanabi';
-import { Simple } from '../modules/core/models/examples/simple';
-import {NanoHanabi} from '../modules/core/models/examples/nanohanabi';
-import {CommonknowledgeStrictlyMoreExpressive} from "../modules/core/models/examples/commonknowledge-strictly-more-expressive";
-import {MineSwooper} from "../modules/core/models/examples/mine-swooper";
-import {AcesAndEights} from "../modules/core/models/examples/aces-and-eights";
+import {RemoteDescription} from "../modules/core/models/examples/remote-description";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +10,7 @@ import {AcesAndEights} from "../modules/core/models/examples/aces-and-eights";
 /** this service is to give the correct exampledescription from menu to core. */
 export class ExampleService {
 
-  private exampleDescription: ExampleDescription = new AcesAndEights();
+  private exampleDescription: ExampleDescription = new RemoteDescription();
   //by default, the loaded example is .... :)
 
   setExampleDescription(exampleDescription: ExampleDescription) {
@@ -27,5 +21,5 @@ export class ExampleService {
     return this.exampleDescription;
   }
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 }

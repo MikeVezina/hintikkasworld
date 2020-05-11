@@ -22,6 +22,10 @@ export class Environment {
         return this._epistemicModel;
     }
 
+    protected setModel(M: EpistemicModel) {
+        this._epistemicModel = M;
+    }
+
     setEpistemicModel(M: EpistemicModel) {
         this._epistemicModel = M;
         this.computeExecutableActions();
@@ -79,4 +83,7 @@ export class Environment {
     }
 
 
+    protected setExecutableActions(executableActions: Action[]) {
+        this.executableActions = executableActions;
+    }
 }
